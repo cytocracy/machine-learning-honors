@@ -18,23 +18,7 @@ v^vv^vv would result in being on floor -3
 '''
 
 def get_floor(directions):
-    countup = directions.count("^")
-    countdown = directions.count("v")
-    floor = countup-countdown
-    '''
-    This function should return the floor from directions. 
-    directions will be a String, and wonderfully in python a
-    String behaves like a list of letters (Strings one
-    character long).
-
-    So if you do
-    for direction in directions:
-        # some code
-
-    then if directions is "vv^" direction will be "v", then
-    "v", then "^"
-    '''
-    return floor
+    return directions.count("^") - directions.count("v")
 
 '''
 Instead of individual directions from the ground floor
@@ -56,11 +40,7 @@ down one floor (-1) to end on floor 2.
 You should be able to use your get_floor function!
 '''
 def get_final_floor(schedule):
-    sum = 0
-    for dir in schedule:
-        sum += get_floor(dir)
-
-    return sum
+    return sum([get_floor(direction) for direction in schedule])
 
 
 if __name__=="__main__":
