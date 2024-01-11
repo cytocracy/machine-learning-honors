@@ -4,10 +4,10 @@ game = Battleship()
 
 print("Hello")
 print("You have " + str(game.getNumShipsRemaining()) + " ships remaining")
-game.printBoard(True)
+game.printBoard(False)
 
 while game.getNumShipsRemaining() > 0:
-    print("Where would you likke to guess?")
+    print("Where would you like to guess?")
     row = int(input("Row: "))
     col = int(input("Col: "))
     coord = (row, col)
@@ -16,4 +16,7 @@ while game.getNumShipsRemaining() > 0:
     else: print("Miss.")
     print("You have " + str(game.getNumShipsRemaining()) + " ships remaining.")
     print("---------------------------------------")
-    game.printBoard(True)
+    game.printBoard(False)
+
+
+print('yippee')

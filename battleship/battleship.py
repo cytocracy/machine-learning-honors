@@ -39,8 +39,8 @@ class Battleship:
         locDic = self.ships
         # print(locDic)
         count = 0
-        for ship in locDic:
-            if len(ship) != 0:
+        for ship in locDic: 
+            if len(locDic[ship]) != 0:
                 count +=1
         # print(count)
         return count
