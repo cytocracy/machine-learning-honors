@@ -1,11 +1,11 @@
 from battleship import Battleship
 import sys
 
-game = True
+play_game = True
 
 print("\n\nHELLO AND WELCOME TO BATTLESHIP WOOO\n\n")
 
-while game:
+while play_game:
     game = Battleship()
 
     print("You have " + str(game.getNumShipsRemaining()) + " ships remaining")
@@ -33,7 +33,7 @@ while game:
     print("Would you like to play again?")
     response = input("Y/N: ")
     if response.lower() == "n":
-        game = False
+        play_game = False
 
 
 print('yippee bye bye')
