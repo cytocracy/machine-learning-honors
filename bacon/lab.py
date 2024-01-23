@@ -30,7 +30,7 @@ def get_actors_with_bacon_number(data, n):
         if actor not in visited:
             visited.add(actor)
 
-            if bacon_number >= n:
+            if bacon_number == n:
                 returns.add(actor)
                 continue
             for neighbor in actors[actor]:
