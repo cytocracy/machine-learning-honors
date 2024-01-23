@@ -21,7 +21,25 @@ def did_x_and_y_act_together(data, actor_id_1, actor_id_2):
     return actor_id_2 in actors[actor_id_1] or actor_id_1 in actors[actor_id_2]
 
 def get_actors_with_bacon_number(data, n):
-    raise NotImplementedError("Implement me!")
+    actors = make_actor_dictionary(data)
+    visited = set()
+    q = [(4724, 0)]
+    returns = set()
+    while q:
+        actor, bacon_number = q.pop(0)
+        if actor not in visited:
+            visited.add(actor)
+
+            if bacon_number >= n:
+                returns.add(actor)
+                continue
+            for neighbor in actors[actor]:
+                q.append((neighbor, bacon_number + 1))
+
+    return returns
+
+
+    # raise NotImplementedError("Implement me!")
 
 def get_bacon_path(data, actor_id):
     raise NotImplementedError("Implement me!")
@@ -41,4 +59,4 @@ if __name__ == '__main__':
     # used, for example, to generate the results for the online questions.
     with open("resources/tiny.json") as f:
         data = json.load(f)
-    print(data)
+    print(get_actors_with_bacon_number(data, 2))
