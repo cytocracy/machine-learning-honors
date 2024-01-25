@@ -35,20 +35,32 @@ def get_actors_with_bacon_number(data, n):
                 continue
             for neighbor in actors[actor]:
                 q.append((neighbor, bacon_number + 1))
-
     return returns
 
-
-    # raise NotImplementedError("Implement me!")
-
 def get_bacon_path(data, actor_id):
-    raise NotImplementedError("Implement me!")
+    return get_path(data, 4724, actor_id)
 
 def get_path(data, actor_id_1, actor_id_2):
-    raise NotImplementedError("Implement me!")
+    actors = make_actor_dictionary(data)
+    visited = set()
+    q = [(actor_id_1, [actor_id_1])]
+    while q:
+        actor, path = q.pop(0)
+        if actor not in visited:
+            visited.add(actor)
+            if actor == actor_id_2:
+                return path
+            for neighbor in actors[actor]:
+                q.append((neighbor, path + [neighbor]))
 
 def actor_path(data, path):
-    raise NotImplementedError("Implement me!")
+    
+    actor_path = []
+    with open("resources/IDToName.json") as f:
+        IDToName = json.load(f)
+    for actor in path:
+        actor_path.append(IDToName[str(actor)])
+    return actor_path
 
 def get_movie_path(data, actor_id_1, actor_id_2):
     raise NotImplementedError("Implement me!")
@@ -59,4 +71,4 @@ if __name__ == '__main__':
     # used, for example, to generate the results for the online questions.
     with open("resources/tiny.json") as f:
         data = json.load(f)
-    print(get_actors_with_bacon_number(data, 2))
+    print(actor_path(data, get_bacon_path(data, 46866)))
