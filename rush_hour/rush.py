@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 
 from helper import *
+from helper import copyBoard
+from helper import copyCars
 from util import *
 
 def makeCars(board):
@@ -29,9 +31,25 @@ def getSuccessors(board):
     Make sure you use either the helper method copyCars
     or copyBoard to create a copy for each successor.
     '''
+    neighbors = []
+
     cars = makeCars(board)
     for car in cars:
         if cars[car][0][0] == cars[car][1][0]: #horiz
+            row = cars[car][0][0]
+            col = cars[car][0][1]
+            if board[row][col-1] == -1:# it is possible woo
+                neighbor = copyCars(cars)
+                for i in range(len(neighbor[car])): # for each tuple
+                    neighbor[car][i] = (neighbors[car][i][0], neighbor[car][i][1] - 1)
+                    neighbor = makeBoard(neighbor)
+                    neighbors.append(neighbor)
+
+                    
+
+
+        else:
+            pass
         
 
     pass
