@@ -68,15 +68,6 @@ def goalTest(board):
     return board[2][4] == 0 and board[2][5] == 0
 
 def BFS(start):
-    '''
-    Implement basic BFS below, using an expanded set to speed
-    up the search.
-
-    This function should return the list of states representing
-    the path to the solution AND the number of nodes that were expanded
-    to find it, in that order.
-    '''
-
     q = [(start, [start])]
     visited = set()
     while q:
@@ -98,13 +89,26 @@ def astarDistToExit(start):
     the path to the solution AND the number of nodes that were expanded
     to find it, in that order.
     '''
-    pass
+    q = [(start, [start])]
+    visited = set()
+    while q:
+        state, path = q.pop(0)
+        if getStringBoard(state) in visited:
+            continue
+        if goalTest(state):
+            return path, len(visited)
+        visited.add(getStringBoard(state))
+        for n in getSuccessors(state):
+            if getStringBoard(n) not in visited:
+                q.append((n, path + [n]))
+            q.sort(key=lambda x: len(x[1]) + distToExitHeuristic(x[0]))
+
+def manhattan(start, end):
+    return abs(end[0] - start[0]) + abs(end[1] - start[1])
 
 def distToExitHeuristic(board):
-    '''
-    How far is the car from the exit location?
-    '''
-    pass
+    cars = makeCars(board)
+    return manhattan(cars[0][0], (2,4))
 
 def astarCarsBlocking(start):
     '''
