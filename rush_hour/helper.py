@@ -3,7 +3,7 @@ from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import numpy as np
 
-from rush import *
+# from rush import *
 
 def loadPuzzle(filename):
     """

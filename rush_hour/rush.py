@@ -26,40 +26,46 @@ def makeBoard(cars):
     return board
 
 def getSuccessors(board):
-    '''
-    How can you get the next states? 
-    Make sure you use either the helper method copyCars
-    or copyBoard to create a copy for each successor.
-    '''
     neighbors = []
-
     cars = makeCars(board)
     for car in cars:
         if cars[car][0][0] == cars[car][1][0]: #horiz
             row = cars[car][0][0]
             col = cars[car][0][1]
-            if board[row][col-1] == -1:# it is possible woo
+            if col-1 > -1 and board[row][col-1] == -1:# it is possible woo
                 neighbor = copyCars(cars)
                 for i in range(len(neighbor[car])): # for each tuple
-                    neighbor[car][i] = (neighbors[car][i][0], neighbor[car][i][1] - 1)
-                    neighbor = makeBoard(neighbor)
-                    neighbors.append(neighbor)
-
-                    
-
-
+                    neighbor[car][i] = (neighbor[car][i][0], neighbor[car][i][1] - 1)
+                neighbor = makeBoard(neighbor)
+                neighbors.append(neighbor)
+            col = cars[car][-1][1]
+            if col + 1 < 6 and board[row][col+1] == -1: # possible to go right
+                neighbor = copyCars(cars)
+                for i in range(len(neighbor[car])):
+                    neighbor[car][i] = (neighbor[car][i][0], neighbor[car][i][1] + 1)
+                neighbor = makeBoard(neighbor)
+                neighbors.append(neighbor)
         else:
-            pass
-        
-
-    pass
+            row = cars[car][0][0]
+            col = cars[car][0][1]
+            if row > 0 and board[row-1][col] == -1: # possible up
+                neighbor = copyCars(cars)
+                for i in range(len(neighbor[car])):
+                    neighbor[car][i] = (neighbor[car][i][0] - 1, neighbor[car][i][1])
+                neighbor = makeBoard(neighbor)
+                neighbors.append(neighbor)
+            row = cars[car][-1][0]
+            if row + 1 < 6 and board[row+1][col] == -1: # possible down
+                neighbor = copyCars(cars)
+                for i in range(len(neighbor[car])):
+                    # print(len(neighbor))
+                    neighbor[car][i] = (neighbor[car][i][0] + 1, neighbor[car][i][1])
+                neighbor = makeBoard(neighbor)
+                neighbors.append(neighbor)
+    return neighbors
 
 def goalTest(board):
-    '''
-    The red car (car idNum 0) must take up locations 
-    (2,4) and (2,5) to be a "finished" search.
-    '''
-    pass
+    return board[2][4] == 0 and board[2][5] == 0
 
 def BFS(start):
     '''
@@ -70,7 +76,19 @@ def BFS(start):
     the path to the solution AND the number of nodes that were expanded
     to find it, in that order.
     '''
-    pass
+
+    q = [(start, [start])]
+    visited = set()
+    while q:
+        state, path = q.pop(0)
+        if getStringBoard(state) in visited:
+            continue
+        if goalTest(state):
+            return path, len(visited)
+        visited.add(getStringBoard(state))
+        for n in getSuccessors(state):
+            if getStringBoard(n) not in visited:
+                q.append((n, path + [n]))
 
 def astarDistToExit(start):
     '''
