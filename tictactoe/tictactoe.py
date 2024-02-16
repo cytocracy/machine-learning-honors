@@ -17,10 +17,12 @@ def minimaxMove(board, player):
 	Returns: 
 		the best possible board move, using minimax to find it
 	'''
-	xxx_best_score_xxx, best_move = maximizer(board, player, 0)
+	alpha = -float('inf')
+	beta = float('inf')
+	xxx_best_score_xxx, best_move = maximizer(board, player, 0, alpha, beta)
 	return best_move
 
-def minimizer(board, player, depth):
+def minimizer(board, player, depth, alpha, beta):
 	if checkVictory(board) != 'ongoing':
 		return getScore(board, swapPlayer(player), depth), None
 	
@@ -31,13 +33,17 @@ def minimizer(board, player, depth):
 		new_board = copyBoard(board)
 		r,c = move
 		new_board[r][c] = player
-		score, xxx_newMove_xxx = maximizer(new_board, swapPlayer(player), depth+1)
+		score, xxx_newMove_xxx = maximizer(new_board, swapPlayer(player), depth+1, alpha, beta)
 		if score < best_score:
 			best_score = score
 			best_move = move
+		if score < beta:
+			beta = score
+		if beta <= alpha:
+			break
 	return best_score, best_move
 
-def maximizer(board, player, depth):
+def maximizer(board, player, depth, alpha, beta):
 	if checkVictory(board) != 'ongoing':
 		return getScore(board, player, depth), None
 	
@@ -48,10 +54,14 @@ def maximizer(board, player, depth):
 		new_board = copyBoard(board)
 		r,c = move
 		new_board[r][c] = player
-		score, xxx_newMove_xxx = minimizer(new_board, swapPlayer(player), depth+1)
+		score, xxx_newMove_xxx = minimizer(new_board, swapPlayer(player), depth+1, alpha, beta)
 		if score > best_score:
 			best_score = score
 			best_move = move
+		if score > alpha:
+			alpha = score
+		if alpha >= beta:
+			break
 	return best_score, best_move
 
 def getScore(board, player, depth):

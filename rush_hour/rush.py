@@ -127,6 +127,13 @@ def carsBlockingHeuristic(board):
     h(B) = 1 if the red car is not at the goal but there's nothing in the way when the board is in state S
     h(B) = 2 if the red car is not at the goal and there is at least one car in between it and the goal when the board is in state S
     """
+    if distToExitHeuristic(board) == 0:
+        return
+    
+    
+    
+
+
     pass
 
 def astarYourHeuristic(start):
