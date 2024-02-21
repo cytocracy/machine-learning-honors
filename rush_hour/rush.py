@@ -5,6 +5,11 @@ from helper import copyBoard
 from helper import copyCars
 from util import *
 
+LEFT = (0, -1)
+RIGHT = (0, 1)
+UP = (-1, 0)
+DOWN = (1, 0)
+
 def makeCars(board):
     cars_dict = {}
     for i in range(len(board)):
@@ -25,43 +30,47 @@ def makeBoard(cars):
 
     return board
 
+def getMove(car, cars, direction):
+    neighbor = copyCars(cars)
+    for i in range(len(neighbor[car])): # for each tuple
+        neighbor[car][i] = (neighbor[car][i][0] + direction[0], neighbor[car][i][1] + direction[1])
+    return makeBoard(neighbor)
+
+def canMove(car, cars, board, direction):
+    if direction == LEFT:
+        row = cars[car][0][0]
+        col = cars[car][0][1]
+        return cars[car][0][1] > 0 and board[row][col-1] == -1
+    if direction == RIGHT:
+        row = cars[car][-1][0]
+        col = cars[car][-1][1]
+        return cars[car][-1][1] < 5 and board[row][col+1] == -1
+    if direction == UP:
+        row = cars[car][0][0]
+        col = cars[car][0][1]
+        return cars[car][0][0] > 0 and board[row-1][col] == -1
+    if direction == DOWN:
+        row = cars[car][-1][0]
+        col = cars[car][-1][1]
+        return cars[car][-1][0] < 5 and board[row+1][col] == -1
+    
+def isHorizontal(car, cars):
+    return cars[car][0][0] == cars[car][1][0]
+
 def getSuccessors(board):
     neighbors = []
     cars = makeCars(board)
     for car in cars:
-        if cars[car][0][0] == cars[car][1][0]: #horiz
-            row = cars[car][0][0]
-            col = cars[car][0][1]
-            if col-1 > -1 and board[row][col-1] == -1:# it is possible woo
-                neighbor = copyCars(cars)
-                for i in range(len(neighbor[car])): # for each tuple
-                    neighbor[car][i] = (neighbor[car][i][0], neighbor[car][i][1] - 1)
-                neighbor = makeBoard(neighbor)
-                neighbors.append(neighbor)
-            col = cars[car][-1][1]
-            if col + 1 < 6 and board[row][col+1] == -1: # possible to go right
-                neighbor = copyCars(cars)
-                for i in range(len(neighbor[car])):
-                    neighbor[car][i] = (neighbor[car][i][0], neighbor[car][i][1] + 1)
-                neighbor = makeBoard(neighbor)
-                neighbors.append(neighbor)
-        else:
-            row = cars[car][0][0]
-            col = cars[car][0][1]
-            if row > 0 and board[row-1][col] == -1: # possible up
-                neighbor = copyCars(cars)
-                for i in range(len(neighbor[car])):
-                    neighbor[car][i] = (neighbor[car][i][0] - 1, neighbor[car][i][1])
-                neighbor = makeBoard(neighbor)
-                neighbors.append(neighbor)
-            row = cars[car][-1][0]
-            if row + 1 < 6 and board[row+1][col] == -1: # possible down
-                neighbor = copyCars(cars)
-                for i in range(len(neighbor[car])):
-                    # print(len(neighbor))
-                    neighbor[car][i] = (neighbor[car][i][0] + 1, neighbor[car][i][1])
-                neighbor = makeBoard(neighbor)
-                neighbors.append(neighbor)
+        if isHorizontal(car, cars):
+            if canMove(car, cars, board, LEFT):
+                neighbors.append(getMove(car, cars, LEFT))
+            if canMove(car, cars, board, RIGHT): 
+                neighbors.append(getMove(car, cars, RIGHT))
+        else: # vertical
+            if canMove(car, cars, board, UP):
+                neighbors.append(getMove(car, cars, UP))
+            if canMove(car, cars, board, DOWN):
+                neighbors.append(getMove(car, cars, DOWN))
     return neighbors
 
 def goalTest(board):
@@ -82,13 +91,6 @@ def BFS(start):
                 q.append((n, path + [n]))
 
 def astarDistToExit(start):
-    '''
-    A* using distToExitHeuristic.
-
-    This function should return the list of states representing
-    the path to the solution AND the number of nodes that were expanded
-    to find it, in that order.
-    '''
     q = [(start, [start])]
     visited = set()
     while q:
@@ -111,14 +113,19 @@ def distToExitHeuristic(board):
     return manhattan(cars[0][0], (2,4))
 
 def astarCarsBlocking(start):
-    '''
-    A* using carsBlockingHeuristic.
-
-    This function should return the list of states representing
-    the path to the solution AND the number of nodes that were expanded
-    to find it, in that order.
-    '''
-    pass
+    q = [(start, [start])]
+    visited = set()
+    while q:
+        state, path = q.pop(0)
+        if getStringBoard(state) in visited:
+            continue
+        if goalTest(state):
+            return path, len(visited)
+        visited.add(getStringBoard(state))
+        for n in getSuccessors(state):
+            if getStringBoard(n) not in visited:
+                q.append((n, path + [n]))
+            q.sort(key=lambda x: len(x[1]) + carsBlockingHeuristic(x[0]))
 
 def carsBlockingHeuristic(board):
     """
@@ -127,42 +134,47 @@ def carsBlockingHeuristic(board):
     h(B) = 1 if the red car is not at the goal but there's nothing in the way when the board is in state S
     h(B) = 2 if the red car is not at the goal and there is at least one car in between it and the goal when the board is in state S
     """
-    if distToExitHeuristic(board) == 0:
-        return
-    
-    
-    
+    cars = makeCars(board)
+    if goalTest(board):
+        return 0
+    row = 2
+    col = cars[0][1][1] + 1
+    while col < 6:
+        if board[row][col] != -1:
+            return 2
+        col += 1
 
-
-    pass
-
+    return 1
+    
 def astarYourHeuristic(start):
-    '''
-    A* using myHeuristic.
-
-    This function should return the list of states representing
-    the path to the solution AND the number of nodes that were expanded
-    to find it, in that order.
-    '''
-    pass
+    q = [(start, [start])]
+    visited = set()
+    while q:
+        state, path = q.pop(0)
+        if getStringBoard(state) in visited:
+            continue
+        if goalTest(state):
+            return path, len(visited)
+        visited.add(getStringBoard(state))
+        for n in getSuccessors(state):
+            if getStringBoard(n) not in visited:
+                q.append((n, path + [n]))
+            q.sort(key=lambda x: len(x[1]) + myHeuristic(x[0]))
 
 def myHeuristic(board):
-    '''
-    Choose your own heuristic function.
-
-    You should write an admissible heuristic! How can you improve on the 
-    blocking heuristic? How can you improve on the distance to exit heuristic?
-    Time to be creative :)
-    '''
-    pass
+    cars_blocking = set()
+    cars = makeCars(board)
+    row = 2
+    col = cars[0][1][1] + 1
+    while col < 6:
+        if board[row][col] != -1:
+            cars_blocking.add(board[row][col])
+        col += 1
+    return distToExitHeuristic(board) + len(cars_blocking)
 
 
 if __name__=="__main__":
     cars = loadPuzzle("jams/1.txt")
     board = makeBoard(cars)
     plot(board)
-
-    # # uncomment for successors!
-    # successors = getSuccessors(board)
-    # plotSuccessors(board, successors)
     plt.show()
