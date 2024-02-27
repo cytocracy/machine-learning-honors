@@ -8,7 +8,7 @@ from helper import *
 solver = astarYourHeuristic
 
 # SET THIS to the file you want to look at
-filename = "jams/easy.txt"
+filename = "jams/6.txt"
 
 # SET THIS to control the fps of the animation (speed)
 fps = 3
