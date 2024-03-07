@@ -16,7 +16,39 @@ def makeMove(p1side, p2side, player, move):
 	stones in it, those stones and the one in the previously empty location
 	get captured and put in the player's Mancala.
 	'''
-	pass
+
+	player_side = p1side if player == 1 else p2side
+	hand = player_side[move]
+	player_side[move] = 0
+	index = move
+
+	while hand > 0:
+		index += 1
+		if index == len(player_side):
+			player_side = get_other_side(player_side, p1side, p2side)
+			index = 0
+		player_side[index] += 1
+		hand -= 1
+
+		if hand == 0:
+			pass # :)
+
+
+	#
+
+
+
+		
+
+
+
+
+
+def get_other_side(side, p1side, p2side):
+	return p1side if side == p2side else p2side
+
+def 	get_opposite_
+
 
 def getAllPossibleMoves(p1side, p2side, player):
 	'''
