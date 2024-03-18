@@ -17,28 +17,61 @@ def makeMove(p1side, p2side, player, move):
 	get captured and put in the player's Mancala.
 	'''
 
-	player_side = p1side if player == 1 else p2side
+	if player == 1:
+		player_side = p1side
+		other_side = p2side
+	else:
+		player_side = p2side
+		other_side = p1side
+
+	own_side = True
+
+	# player is 1 or 2
+	# p1side and p2side are lists of integers representing the board
+
 	hand = player_side[move]
 	player_side[move] = 0
 	index = move
 
 	while hand > 0:
 		index += 1
-		if index == len(player_side):
-			player_side = get_other_side(player_side, p1side, p2side)
-			index = 0
-		player_side[index] += 1
+		if index == len(player_side) - 1:
+			if own_side:
+				hand -= 1
+				player_side[index] += 1
+				if hand == 0:
+					return True
+				own_side = not own_side
+				index = 0
+			else:
+				own_side = not own_side
+				index = 0
+			
 		hand -= 1
+		if own_side:
+			player_side[index] += 1
+		else:
+			other_side[index] += 1
 
 		if hand == 0:
-			pass # :)
-
-
-	#
-
-
-
+			if check_capture(own_side, player_side, other_side, index):
+				capture(own_side, player_side, other_side, index)
+			return False
 		
+
+def check_capture(own_side, player_side, other_side, index):
+	return own_side and player_side[index] == 1 and other_side[get_opposite_idx(index)]>0
+
+def capture(own_side, player_side, other_side, index):
+	own_side[-1] += other_side[get_opposite_idx(index)] + own_side[index]
+	own_side[index] = 0
+	other_side[get_opposite_idx(index)] = 0
+
+
+
+def get_opposite_idx(idx):
+	return 5-idx
+
 
 
 
@@ -47,7 +80,7 @@ def makeMove(p1side, p2side, player, move):
 def get_other_side(side, p1side, p2side):
 	return p1side if side == p2side else p2side
 
-def 	get_opposite_
+
 
 
 def getAllPossibleMoves(p1side, p2side, player):
@@ -149,6 +182,9 @@ def anyMove(func, p1side, p2side, player):
     toc = time.time()
     print("You took",toc-tic,"seconds to move!")
     while makeMove(p1side, p2side, player, move):
+        if isVictory(p1side, p2side) != "ongoing":
+            displayBoard(p1side, p2side)
+            return
         displayBoard(p1side, p2side)
         print("You get to move again!")
         tic = time.time()
