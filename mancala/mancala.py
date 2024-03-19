@@ -63,8 +63,8 @@ def check_capture(own_side, player_side, other_side, index):
 	return own_side and player_side[index] == 1 and other_side[get_opposite_idx(index)]>0
 
 def capture(own_side, player_side, other_side, index):
-	own_side[-1] += other_side[get_opposite_idx(index)] + own_side[index]
-	own_side[index] = 0
+	player_side[-1] += other_side[get_opposite_idx(index)] + player_side[index]
+	player_side[index] = 0
 	other_side[get_opposite_idx(index)] = 0
 
 
